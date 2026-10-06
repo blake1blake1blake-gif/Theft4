@@ -1,0 +1,38 @@
+name: Build Unsigned IPA
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout repository with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      
+      - name: Run setup_repo.py
+        run: python3 tools/setup_repo.py
+      
+      - name: Check setup with --check flag
+        run: python3 tools/setup_repo.py --check
+      
+      - name: Build unsigned IPA
+        run: |
+          # Add your build command here
+          # Example: xcodebuild -workspace Theft4.xcworkspace -scheme Theft4 -configuration Release -derivedDataPath build
+          echo "Building unsigned IPA..."
+      
+      - name: Upload IPA as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: unsigned-ipa
+          path: '**/*.ipa'
+          if-no-files-found: warn
